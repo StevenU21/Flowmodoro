@@ -14,11 +14,15 @@ export interface Session {
 
 const STORAGE_KEY = 'flowmodoro_history';
 
+import { useSound } from './useSound';
+
 export function useFlowmodoro() {
   const mode = ref<FlowMode>(FlowMode.IDLE);
   const timerId = ref<number | null>(null);
   const startTime = ref<number | null>(null);
   
+  const { playSound } = useSound();
+
   const sessionElapsed = ref(0);
   
   // Load history from localStorage if available
@@ -60,6 +64,7 @@ export function useFlowmodoro() {
       }
       
       if (breakBank.value <= 0) {
+        playSound('finish');
         stopBreak();
         return;
       }
@@ -70,6 +75,7 @@ export function useFlowmodoro() {
 
   const startFlow = () => {
     if (mode.value === FlowMode.FLOW) return;
+    playSound('start');
     mode.value = FlowMode.FLOW;
     
     startTime.value = Date.now() - sessionElapsed.value;
@@ -85,6 +91,8 @@ export function useFlowmodoro() {
        cancelAnimationFrame(timerId.value);
        timerId.value = null;
      }
+
+     playSound('break');
 
      const sessionTime = sessionElapsed.value;
      history.value.push({
