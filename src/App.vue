@@ -4,7 +4,6 @@ import { ref, computed, watch } from 'vue';
 import AppHeader from './components/AppHeader.vue';
 import TimerDisplay from './components/TimerDisplay.vue';
 import ControlButtons from './components/ControlButtons.vue';
-import BreakBankDisplay from './components/BreakBankDisplay.vue';
 import SessionHistory from './components/SessionHistory.vue';
 import InfoModal from './components/InfoModal.vue';
 import AppFooter from './components/AppFooter.vue';
@@ -52,7 +51,7 @@ watch([mode, sessionElapsed, breakBank], () => {
 </script>
 
 <template>
-  <div class="flex flex-col min-h-screen bg-slate-900 text-teal-500 font-mono selection:bg-teal-500 selection:text-slate-900 transition-colors duration-700 relative overflow-hidden">
+  <div class="flex flex-col min-h-screen bg-slate-900 text-teal-500 font-mono selection:bg-teal-500 selection:text-slate-900 transition-colors duration-700 relative overflow-x-hidden">
     
     <div class="absolute inset-0 bg-gradient-to-b from-slate-900 to-slate-950 pointer-events-none"></div>
 
@@ -81,13 +80,8 @@ watch([mode, sessionElapsed, breakBank], () => {
         @stopBreak="stopBreak"
       />
 
-      <BreakBankDisplay 
-        :minutes="formattedBreak.minutes"
-        :seconds="formattedBreak.seconds"
-      />
+      <SessionHistory :history="history" />
     </main>
-
-    <SessionHistory :history="history" />
 
     <AppFooter />
 

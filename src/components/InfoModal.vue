@@ -18,15 +18,15 @@ const emit = defineEmits<{
       <div class="space-y-4 text-slate-300 text-sm leading-relaxed">
         <p>
           <strong class="text-teal-200">1. Enfócate (Flow):</strong>
-          El cronómetro cuenta hacia arriba. Trabaja hasta cansarte.
+          El cronómetro cuenta hacia arriba <em class="text-slate-400">(solo minutos, para evitar distracciones)</em>. Trabaja hasta cansarte.
         </p>
         <p>
           <strong class="text-teal-200">2. Descansa (Ratio 5:1):</strong>
-          5 min trabajo = 1 min descanso. El tiempo se acumula en el "Banco".
+          5 min trabajo = 1 min descanso. El tiempo se acumula y se muestra <em class="text-slate-400">después de registrar tu sesión</em>.
         </p>
         <p>
           <strong class="text-teal-200">3. Nuevo Ciclo:</strong>
-          Al registrar descanso, tu tiempo se guarda en el historial y comienza la cuenta regresiva.
+          Al registrar descanso, tu tiempo se guarda en el historial y comienza la cuenta regresiva <em class="text-slate-400">(con segundos para precisión)</em>.
         </p>
         
         <div class="border-t border-slate-700 pt-4 mt-4">

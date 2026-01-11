@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 export enum FlowMode {
   IDLE = 'idle',
@@ -12,6 +12,8 @@ export interface Session {
   timestamp: number;
 }
 
+const STORAGE_KEY = 'flowmodoro_history';
+
 export function useFlowmodoro() {
   const mode = ref<FlowMode>(FlowMode.IDLE);
   const timerId = ref<number | null>(null);
@@ -19,13 +21,26 @@ export function useFlowmodoro() {
   
   const sessionElapsed = ref(0);
   
-  const history = ref<Session[]>([]);
+  // Load history from localStorage if available
+  const storedHistory = localStorage.getItem(STORAGE_KEY);
+  const history = ref<Session[]>(storedHistory ? JSON.parse(storedHistory) : []);
+
+  // Save to localStorage whenever history changes
+  watch(history, (newHistory) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newHistory));
+  }, { deep: true });
+
   const dailyTotal = computed(() => {
     return history.value.reduce((total, session) => total + session.duration, 0);
   });
   
   const breakRatio = 5;
-  const breakBank = ref(0);
+  const storedBank = localStorage.getItem('flowmodoro_break_bank');
+  const breakBank = ref(storedBank ? Number(storedBank) : 0);
+
+  watch(breakBank, (newVal) => {
+    localStorage.setItem('flowmodoro_break_bank', newVal.toString());
+  });
 
   const isRunning = computed(() => timerId.value !== null);
 
@@ -45,6 +60,8 @@ export function useFlowmodoro() {
       }
       
       if (breakBank.value <= 0) {
+        stopBreak();
+        return;
       }
     }
     
@@ -60,8 +77,14 @@ export function useFlowmodoro() {
   };
 
   const stopFlowAndBank = () => {
-     if (mode.value !== FlowMode.FLOW && mode.value !== FlowMode.IDLE) return;
+     if (mode.value !== FlowMode.FLOW) return;
      if (sessionElapsed.value === 0) return;
+
+     // Stop the timer first
+     if (timerId.value) {
+       cancelAnimationFrame(timerId.value);
+       timerId.value = null;
+     }
 
      const sessionTime = sessionElapsed.value;
      history.value.push({
