@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FlowMode } from '../composables/useFlowmodoro';
+import { type FlowMode, FlowMode as FlowModeEnum } from '../composables/useFlowmodoro';
 
 defineProps<{
   mode: FlowMode;
@@ -11,7 +11,7 @@ defineProps<{
 
 <template>
   <div :class="['flex items-baseline mb-12 transition-opacity duration-700', opacity]">
-    <span v-if="mode !== 'break'" class="text-[12rem] leading-none font-bold text-slate-100 tracking-tighter drop-shadow-2xl">
+    <span v-if="mode !== FlowModeEnum.BREAK" class="text-[12rem] leading-none font-bold text-slate-100 tracking-tighter drop-shadow-2xl">
       {{ formattedMinutes }}
     </span>
 

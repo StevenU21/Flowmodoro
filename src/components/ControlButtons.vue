@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FlowMode } from '../composables/useFlowmodoro';
+import { type FlowMode, FlowMode as FlowModeEnum } from '../composables/useFlowmodoro';
 
 defineProps<{
   mode: FlowMode;
@@ -18,14 +18,14 @@ const emit = defineEmits<{
 <template>
   <div class="flex gap-4 mb-16">
     <button 
-      v-if="mode === 'idle'" 
+      v-if="mode === FlowModeEnum.IDLE" 
       @click="emit('startFlow')"
       class="px-8 py-3 bg-teal-600 text-slate-900 font-bold rounded hover:bg-teal-500 transition-all transform hover:scale-105 shadow-lg shadow-teal-500/20"
     >
       {{ sessionElapsed > 0 ? 'REANUDAR' : 'INICIAR FLOW' }}
     </button>
 
-    <div v-if="mode === 'flow'" class="flex gap-4">
+    <div v-if="mode === FlowModeEnum.FLOW" class="flex gap-4">
       <button @click="emit('pause')" class="px-6 py-3 border border-slate-700 text-slate-400 hover:text-white rounded">
         PAUSAR
       </button>
@@ -37,7 +37,7 @@ const emit = defineEmits<{
       </button>
     </div>
 
-    <div v-if="mode === 'break'" class="flex flex-col items-center gap-2">
+    <div v-if="mode === FlowModeEnum.BREAK" class="flex flex-col items-center gap-2">
       <button 
         @click="emit('stopBreak')"
         class="px-8 py-3 bg-slate-700 text-slate-200 font-bold rounded hover:bg-slate-600 transition-all"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useFlowmodoro } from './composables/useFlowmodoro';
+import { useFlowmodoro, FlowMode } from './composables/useFlowmodoro';
 import { ref, computed, watch } from 'vue';
 import AppHeader from './components/AppHeader.vue';
 import TimerDisplay from './components/TimerDisplay.vue';
@@ -32,8 +32,8 @@ const timerOpacity = computed(() => isRunning.value ? 'opacity-100' : 'opacity-8
 const deepWorkLabelClass = computed(() => isRunning.value ? 'opacity-50' : 'opacity-30');
 
 const headerText = computed(() => {
-  if (mode.value === 'break') return 'Modo Descanso';
-  if (mode.value === 'flow') return 'Modo Enfoque';
+  if (mode.value === FlowMode.BREAK) return 'Modo Descanso';
+  if (mode.value === FlowMode.FLOW) return 'Modo Enfoque';
   return 'Listo para el Flow';
 });
 
@@ -41,9 +41,9 @@ const showInfo = ref(false);
 const toggleInfo = () => showInfo.value = !showInfo.value;
 
 watch([mode, sessionElapsed, breakBank], () => {
-  if (mode.value === 'flow') {
+  if (mode.value === FlowMode.FLOW) {
     document.title = `${formattedSession.value.minutes}m - Flowmodoro (Trabajo)`;
-  } else if (mode.value === 'break') {
+  } else if (mode.value === FlowMode.BREAK) {
     document.title = `${formattedBreak.value.minutes}:${formattedBreak.value.seconds} - Flowmodoro (Descanso)`;
   } else {
     document.title = 'Flowmodoro';
@@ -66,7 +66,7 @@ watch([mode, sessionElapsed, breakBank], () => {
 
       <TimerDisplay 
         :mode="mode"
-        :formattedMinutes="mode === 'break' ? formattedBreak.minutes : formattedSession.minutes"
+        :formattedMinutes="mode === FlowMode.BREAK ? formattedBreak.minutes : formattedSession.minutes"
         :formattedSeconds="formattedBreak.seconds"
         :opacity="timerOpacity"
       />

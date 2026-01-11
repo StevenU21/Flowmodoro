@@ -1,6 +1,10 @@
 import { ref, computed } from 'vue';
 
-export type FlowMode = 'idle' | 'flow' | 'break';
+export enum FlowMode {
+  IDLE = 'idle',
+  FLOW = 'flow',
+  BREAK = 'break'
+}
 
 export interface Session {
   id: number;
@@ -9,7 +13,7 @@ export interface Session {
 }
 
 export function useFlowmodoro() {
-  const mode = ref<FlowMode>('idle');
+  const mode = ref<FlowMode>(FlowMode.IDLE);
   const timerId = ref<number | null>(null);
   const startTime = ref<number | null>(null);
   
@@ -29,11 +33,11 @@ export function useFlowmodoro() {
 
   const runTick = () => {
     const now = Date.now();
-    if (mode.value === 'flow') {
+    if (mode.value === FlowMode.FLOW) {
       if (startTime.value) {
         sessionElapsed.value = now - startTime.value;
       }
-    } else if (mode.value === 'break') {
+    } else if (mode.value === FlowMode.BREAK) {
       const delta = now - lastTickTime;
       if (delta > 0) {
          breakBank.value = Math.max(0, breakBank.value - delta);
@@ -48,15 +52,15 @@ export function useFlowmodoro() {
   };
 
   const startFlow = () => {
-    if (mode.value === 'flow') return;
-    mode.value = 'flow';
+    if (mode.value === FlowMode.FLOW) return;
+    mode.value = FlowMode.FLOW;
     
     startTime.value = Date.now() - sessionElapsed.value;
     timerId.value = requestAnimationFrame(runTick);
   };
 
   const stopFlowAndBank = () => {
-     if (mode.value !== 'flow' && mode.value !== 'idle') return;
+     if (mode.value !== FlowMode.FLOW && mode.value !== FlowMode.IDLE) return;
      if (sessionElapsed.value === 0) return;
 
      const sessionTime = sessionElapsed.value;
@@ -76,7 +80,7 @@ export function useFlowmodoro() {
   };
 
   const startBreak = () => {
-    mode.value = 'break';
+    mode.value = FlowMode.BREAK;
     lastTickTime = Date.now();
     timerId.value = requestAnimationFrame(runTick);
   };
@@ -84,7 +88,7 @@ export function useFlowmodoro() {
   const stopBreak = () => {
     if (timerId.value) cancelAnimationFrame(timerId.value);
     timerId.value = null;
-    mode.value = 'idle';
+    mode.value = FlowMode.IDLE;
   };
 
   const pause = () => {
