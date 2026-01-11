@@ -26,7 +26,7 @@ const emit = defineEmits<{
         </p>
         <p>
           <strong class="text-teal-200">3. Nuevo Ciclo:</strong>
-          Al registrar descanso, tu tiempo se guarda en el historial y comienza la cuenta regresiva <em class="text-slate-400">(con segundos para precisión)</em>.
+          Al registrar descanso, tu tiempo se guarda en el historial y comienza la cuenta regresiva.
         </p>
         
         <div class="border-t border-slate-700 pt-4 mt-4">

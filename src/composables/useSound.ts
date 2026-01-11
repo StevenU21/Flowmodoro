@@ -1,20 +1,20 @@
 export function useSound() {
-  const playSound = (soundName: 'start' | 'break' | 'finish') => {
-    // Placeholder for audio files
-    // You can add your audio files in the public/audio directory
-    // Example: const audio = new Audio(`/audio/${soundName}.mp3`);
-    
+  const playSound = (soundName: 'start' | 'break' | 'finish' | 'interval') => {
+
     let audioFile = '';
     
     switch (soundName) {
       case 'start':
-        // audioFile = '/audio/start.mp3';
+        audioFile = '/audio/notification-01.mp3';
         break;
       case 'break':
-        // audioFile = '/audio/break.mp3';
+        audioFile = '/audio/notification-03.mp3';
         break;
       case 'finish':
-        // audioFile = '/audio/finish.mp3';
+        audioFile = '/audio/notification-02.mp3';
+        break;
+      case 'interval':
+        audioFile = '/audio/notification-04.mp3';
         break;
     }
 

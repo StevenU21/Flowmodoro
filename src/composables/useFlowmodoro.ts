@@ -49,12 +49,23 @@ export function useFlowmodoro() {
   const isRunning = computed(() => timerId.value !== null);
 
   let lastTickTime = 0;
+  let lastIntervalSoundTime = 0;
+  
+  // Configurable interval in minutes (default 30)
+  const intervalMinutes = ref(30);
 
   const runTick = () => {
     const now = Date.now();
     if (mode.value === FlowMode.FLOW) {
       if (startTime.value) {
         sessionElapsed.value = now - startTime.value;
+        
+        // Play sound every N minutes interval
+        const intervalMs = intervalMinutes.value * 60 * 1000;
+        if (sessionElapsed.value >= lastIntervalSoundTime + intervalMs) {
+          playSound('interval');
+          lastIntervalSoundTime += intervalMs;
+        }
       }
     } else if (mode.value === FlowMode.BREAK) {
       const delta = now - lastTickTime;
@@ -106,6 +117,7 @@ export function useFlowmodoro() {
 
      sessionElapsed.value = 0;
      startTime.value = null;
+     lastIntervalSoundTime = 0;
      
      startBreak();
   };
@@ -119,6 +131,7 @@ export function useFlowmodoro() {
   const stopBreak = () => {
     if (timerId.value) cancelAnimationFrame(timerId.value);
     timerId.value = null;
+    breakBank.value = 0; // Reset remaining break time
     mode.value = FlowMode.IDLE;
   };
 
@@ -167,6 +180,7 @@ export function useFlowmodoro() {
     pause,
     formatTime,
     formatHours,
-    addFiveMinutes
+    addFiveMinutes,
+    intervalMinutes
   };
 }
