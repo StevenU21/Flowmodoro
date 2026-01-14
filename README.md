@@ -49,8 +49,3 @@ npm run preview
 MIT License
 
 ---
-
-## Author
-
-StevenU21  
-GitHub: https://github.com/StevenU21/Flowmodoro
