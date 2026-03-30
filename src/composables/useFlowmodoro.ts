@@ -1,4 +1,4 @@
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 
 export enum FlowMode {
   IDLE = 'idle',
@@ -13,6 +13,8 @@ export interface Session {
 }
 
 const STORAGE_KEY = 'flowmodoro_history';
+const BREAK_BANK_KEY = 'flowmodoro_break_bank';
+const RESET_DATE_KEY = 'flowmodoro_last_reset_date';
 
 import { useSound } from './useSound';
 
@@ -24,6 +26,14 @@ export function useFlowmodoro() {
   const { playSound } = useSound();
 
   const sessionElapsed = ref(0);
+
+  const getLocalDateKey = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
   
   // Load history from localStorage if available
   const storedHistory = localStorage.getItem(STORAGE_KEY);
@@ -39,11 +49,40 @@ export function useFlowmodoro() {
   });
   
   const breakRatio = 5;
-  const storedBank = localStorage.getItem('flowmodoro_break_bank');
+  const storedBank = localStorage.getItem(BREAK_BANK_KEY);
   const breakBank = ref(storedBank ? Number(storedBank) : 0);
 
+  const resetDailyStateIfNeeded = () => {
+    const today = getLocalDateKey();
+    const lastResetDate = localStorage.getItem(RESET_DATE_KEY);
+
+    if (lastResetDate === today) return;
+
+    history.value = [];
+    breakBank.value = 0;
+    localStorage.setItem(RESET_DATE_KEY, today);
+  };
+
+  // Ensure persisted totals are scoped to the current local day.
+  resetDailyStateIfNeeded();
+
   watch(breakBank, (newVal) => {
-    localStorage.setItem('flowmodoro_break_bank', newVal.toString());
+    localStorage.setItem(BREAK_BANK_KEY, newVal.toString());
+  });
+
+  let dayCheckTimer: number | null = null;
+
+  onMounted(() => {
+    dayCheckTimer = window.setInterval(() => {
+      resetDailyStateIfNeeded();
+    }, 60 * 1000);
+  });
+
+  onUnmounted(() => {
+    if (dayCheckTimer !== null) {
+      window.clearInterval(dayCheckTimer);
+      dayCheckTimer = null;
+    }
   });
 
   const isRunning = computed(() => timerId.value !== null);
