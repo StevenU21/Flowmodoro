@@ -41,16 +41,3 @@ npm run build
 # Preview build
 npm run preview
 ```
-
----
-
-## License
-
-MIT License
-
----
-
-## Author
-
-StevenU21  
-GitHub: https://github.com/StevenU21/Flowmodoro
